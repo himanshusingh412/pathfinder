@@ -1,8 +1,5 @@
-const CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
-const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-
 // High-Fidelity Mock Database for Offline Unified Discovery Mode
-const MOCK_DATABASE = {
+export const MOCK_DATABASE = {
   English: {
     interestDiscovery: [
       {
@@ -29,7 +26,7 @@ const MOCK_DATABASE = {
     careerPaths: [
       { title: "Artificial Intelligence & ML Engineer", description: "Design and implement machine learning models, neural networks, and AI systems.", salaryRange: "₹8,0,000 - ₹35,0,000 / year", demandLevel: "High" },
       { title: "Full Stack Software Developer", description: "Build end-to-end web and mobile applications, handling both frontend UI and backend databases.", salaryRange: "₹5,0,000 - ₹20,00,000 / year", demandLevel: "High" },
-      { title: "Cybersecurity Analyst", description: "Protect organizational networks, systems, and data from cyber threats and security breaches.", salaryRange: "₹6,0,000 - ₹18,00,000 / year", demandLevel: "Medium" }
+      { title: "Cybersecurity Analyst", description: "Protect organizational networks, systems, and data from cyber threats and security breaches.", salaryRange: "₹6,0,050 - ₹18,00,000 / year", demandLevel: "Medium" }
     ],
     roadmap: [
       { step: 1, title: "Explore Tech Basics", description: "Take small coding exercises and watch intro tutorials to see if coding excites you.", duration: "1 Month" },
@@ -78,7 +75,7 @@ const MOCK_DATABASE = {
       ],
       careerPaths: [
         { title: "आर्टिफिशियल इंटेलिजेंस और मशीन लर्निंग इंजीनियर", description: "मशीन लर्निंग मॉडल, न्यूरल नेटवर्क और एआई सिस्टम का डिज़ाइन और कार्यान्वयन करना।", salaryRange: "₹8,0,000 - ₹35,0,000 / वर्ष", demandLevel: "High" },
-        { title: "फुल स्टैक सॉफ्टवेयर डेवलपर", description: "फ्रंटएंड और बैकएंड डेटाबेस दोनों को संभालते हुए, संपूर्ण वेब और मोबाइल एप्लिकेशन बनाना।", salaryRange: "₹5,00,000 - ₹20,00,000 / वर्ष", demandLevel: "High" }
+        { title: "फुल स्टैक सॉफ्टवेयर डेवलपर", description: "फ्रंटएंड और बैकएंड डेटाबेस दोनों को संभालते हुए, संपूर्ण वेब और मोबाइल एप्लिकेशन बनाना।", salaryRange: "₹5,0,000 - ₹20,0,000 / वर्ष", demandLevel: "High" }
       ],
       roadmap: [
         { step: 1, title: "बुनियादी तकनीकी ज्ञान", description: "कोडिंग ट्यूटोरियल देखें और पता करें कि क्या आपको प्रोग्रामिंग पसंद आती है।", duration: "1 महीना" },
@@ -137,7 +134,7 @@ const MOCK_DATABASE = {
   }
 };
 
-function getOfflineMockRoadmap(studentData) {
+export function getOfflineMockRoadmap(studentData) {
   const lang = studentData.language === 'Hindi' ? 'Hindi' : 'English';
   const interests = studentData.interests || [];
   
@@ -151,161 +148,29 @@ function getOfflineMockRoadmap(studentData) {
   return MOCK_DATABASE[lang][category] || MOCK_DATABASE[lang]['Default'];
 }
 
-export async function generateCareerRoadmap(studentData) {
-  try {
-    const response = await fetch('/api/roadmap', {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ studentData })
-    });
-
-    if (response.ok) {
-      return await response.json();
-    }
-
-    if (response.status === 404) {
-      console.warn("Backend API route '/api/roadmap' returned 404. Falling back to offline mock mode.");
-      return getOfflineMockRoadmap(studentData);
-    }
-
-    const errText = await response.text();
-    throw new Error(errText || `Server responded with status ${response.status}`);
-  } catch (error) {
-    if (error instanceof TypeError || error.message.includes('fetch')) {
-      console.warn("Could not connect to backend API '/api/roadmap'. Falling back to offline mock mode.", error);
-      return getOfflineMockRoadmap(studentData);
-    }
-    throw error;
+export function extractJSON(text) {
+  const start = text.indexOf('{');
+  if (start === -1) {
+    throw new Error("Could not find any JSON start bracket '{' in the response.");
   }
-}
-
-export async function sendChatMessage(messages, studentContext) {
-  try {
-    const response = await fetch('/api/chat', {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ messages, studentContext })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return data.reply;
-    }
-
-    if (response.status === 404) {
-      console.warn("Backend API route '/api/chat' returned 404. Falling back to offline mock mode.");
-      return getOfflineMockChat(messages, studentContext);
-    }
-
-    const errText = await response.text();
-    throw new Error(errText || `Server responded with status ${response.status}`);
-  } catch (error) {
-    if (error instanceof TypeError || error.message.includes('fetch')) {
-      console.warn("Could not connect to backend API '/api/chat'. Falling back to offline mock mode.", error);
-      return getOfflineMockChat(messages, studentContext);
-    }
-    throw error;
-  }
-}
-
-function getOfflineMockChat(messages, studentContext) {
-  const context = JSON.parse(studentContext);
-  const lang = context.studentData?.language || "English";
-  const lastUserQuery = messages[messages.length - 1]?.content || "";
-  const lowerQuery = lastUserQuery.toLowerCase();
-
-  let reply = "";
-  if (lowerQuery.includes("game") || lowerQuery.includes("gaming") || lowerQuery.includes("खेल")) {
-    reply = `🎯 Understanding Gaming Careers
-
-• What you’ll do:
-→ Game Design (rules, story)
-→ Game Development (coding, physics)
-→ Game Art (3D modeling, animation)
-
-• Why it fits:
-→ Indian gaming industry is growing rapidly  
-→ More studios + global opportunities
-
-• Challenge:
-⚠️ Needs strong mix of technical + creative skills  
-⚠️ Long development hours
-
-• Narrow it down:
-→ Do you enjoy coding mechanics  
-→ OR creating characters & worlds?
-
-• Learn via YouTube:
-→ https://www.youtube.com/results?search_query=career+in+gaming+india
-
-• Official Link:
-→ https://www.nid.edu`;
-  } else if (lang === "Hindi") {
-    if (lowerQuery.includes("college") || lowerQuery.includes("कॉलेज")) {
-      reply = `🎯 कॉलेज प्रवेश
-
-• जानकारी:
-→ सरकारी कॉलेज में प्रवेश के लिए JEE परीक्षा आवश्यक है
-
-• लक्ष्य:
-✓ IIT या NIT में दाखिला`;
-    } else if (lowerQuery.includes("exam") || lowerQuery.includes("परीक्षा") || lowerQuery.includes("तैयारी")) {
-      reply = `🎯 परीक्षा तैयारी
-
-• तरीका:
-→ पिछले साल के प्रश्न पत्र हल करें
-→ बुनियादी अवधारणाओं को समझें
-
-• लक्ष्य:
-✓ परीक्षा पैटर्न को समझना`;
-    } else {
-      reply = `🎯 कैरियर मार्ग
-
-• कार्य:
-→ कोडिंग सीखना
-→ प्रोजेक्ट बनाना
-→ समस्या समाधान सुधारना
-
-• प्रश्न:
-→ क्या आप गणित में रुचि रखते हैं?`;
-    }
-  } else {
-    if (lowerQuery.includes("college") || lowerQuery.toLowerCase().includes("university")) {
-      reply = `🎯 College Selection
-
-• Next step:
-→ Explore NIT and IIT cutoffs
-→ List target states
-
-• Goal:
-✓ Shortlist 3 colleges`;
-    } else if (lowerQuery.includes("exam") || lowerQuery.toLowerCase().includes("prepare") || lowerQuery.toLowerCase().includes("syllabus")) {
-      reply = `🎯 Exam Prep
-
-• Method:
-→ Practice math daily
-→ Solve physics concepts
-→ Review chemistry notes
-
-• Goal:
-✓ Complete 1 mock test this week`;
-    } else {
-      reply = `🎯 Career Guidance
-
-• Suggestion:
-→ Identify your key interest area
-→ Start with a small action
-
-• Question:
-→ Do you prefer working on code logic
-→ Or drawing visual design layouts?`;
+  
+  const endIndices = [];
+  for (let i = start; i < text.length; i++) {
+    if (text[i] === '}') {
+      endIndices.push(i);
     }
   }
-
-  return reply;
+  
+  let lastError = null;
+  for (let i = endIndices.length - 1; i >= 0; i--) {
+    const endIdx = endIndices[i];
+    const jsonStr = text.substring(start, endIdx + 1);
+    try {
+      return JSON.parse(jsonStr);
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  
+  throw lastError || new Error("Could not find a valid JSON object in the response.");
 }
-
