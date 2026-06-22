@@ -27,6 +27,35 @@ export default function StudentForm({ onSubmit, isLoading }) {
 
   const [customInterest, setCustomInterest] = useState('');
   const [errors, setErrors] = useState({});
+  const [selectedStream, setSelectedStream] = useState('');
+  const [selectedElective, setSelectedElective] = useState('');
+  const [customStream, setCustomStream] = useState('');
+  const [customElective, setCustomElective] = useState('');
+  const [isOpenInterests, setIsOpenInterests] = useState(false);
+
+  React.useEffect(() => {
+    if (formData.studentClass === '10') {
+      setFormData(prev => ({ ...prev, subjects: 'General School Subjects (Maths, Science, Social Studies)' }));
+    } else if (formData.studentClass === '12') {
+      let core = selectedStream;
+      if (selectedStream === 'Other') {
+        core = customStream || '';
+      }
+      
+      let electiveStr = '';
+      if (selectedElective) {
+        if (selectedElective === 'Other') {
+          electiveStr = customElective ? ` with ${customElective}` : '';
+        } else if (selectedElective !== 'None') {
+          electiveStr = ` with ${selectedElective}`;
+        }
+      }
+      
+      setFormData(prev => ({ ...prev, subjects: core ? `${core}${electiveStr}` : '' }));
+    } else {
+      setFormData(prev => ({ ...prev, subjects: '' }));
+    }
+  }, [formData.studentClass, selectedStream, selectedElective, customStream, customElective]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +90,11 @@ export default function StudentForm({ onSubmit, isLoading }) {
       newErrors.interests = 'Please specify your other interests in the text field';
     }
     
-    if (!formData.subjects.trim()) newErrors.subjects = 'Subjects description is required';
+    if (!formData.subjects.trim()) {
+      newErrors.subjects = formData.studentClass === '12' 
+        ? 'Please select your stream and elective' 
+        : 'Subjects description is required';
+    }
     
     if (formData.marks === '') {
       newErrors.marks = 'Marks are required';
@@ -170,58 +203,194 @@ export default function StudentForm({ onSubmit, isLoading }) {
             </div>
           </div>
 
-          {/* Subjects studied */}
-          <div>
-            <label htmlFor="subjects" className="block text-sm font-semibold text-slate-300 mb-2">
-              Subjects / Stream Details
-            </label>
-            <input
-              type="text"
-              id="subjects"
-              name="subjects"
-              value={formData.subjects}
-              onChange={handleInputChange}
-              placeholder="e.g. Science with PCM, Commerce with IP, or General Subjects"
-              className={`w-full bg-slate-950/60 border ${
-                errors.subjects ? 'border-red-500/80 focus:ring-red-500/20' : 'border-slate-800 focus:ring-indigo-500/20 focus:border-indigo-500'
-              } rounded-lg py-3 px-4 text-white placeholder-slate-650 focus:outline-none focus:ring-4 transition-all`}
-            />
-            {errors.subjects && <p className="mt-1.5 text-xs text-red-400">{errors.subjects}</p>}
-          </div>
+          {/* Subjects Selection */}
+          {formData.studentClass === '10' ? (
+            <div>
+              <label className="block text-sm font-semibold text-slate-300 mb-2">
+                Subjects / Stream Details
+              </label>
+              <input
+                type="text"
+                value="General School Subjects (Maths, Science, Social Studies, Languages)"
+                disabled
+                className="w-full bg-slate-950/40 border border-slate-850 rounded-lg py-3 px-4 text-slate-400 cursor-not-allowed text-sm"
+              />
+            </div>
+          ) : formData.studentClass === '12' ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Core Stream Selection */}
+                <div>
+                  <label htmlFor="coreStream" className="block text-sm font-semibold text-slate-300 mb-2">
+                    Core Stream
+                  </label>
+                  <select
+                    id="coreStream"
+                    value={selectedStream}
+                    onChange={(e) => {
+                      setSelectedStream(e.target.value);
+                      if (e.target.value !== 'Other') setCustomStream('');
+                    }}
+                    className={`w-full bg-slate-950/60 border ${
+                      errors.subjects ? 'border-red-500/80 focus:ring-red-500/20' : 'border-slate-800 focus:ring-indigo-500/20 focus:border-indigo-500'
+                    } rounded-lg py-3 px-4 text-slate-300 text-sm focus:outline-none focus:ring-4 transition-all`}
+                  >
+                    <option value="">Select Core Stream</option>
+                    <option value="Science (PCM)">Science (PCM - Physics, Chemistry, Math)</option>
+                    <option value="Science (PCB)">Science (PCB - Physics, Chemistry, Biology)</option>
+                    <option value="Science (PCMB)">Science (PCMB - Physics, Chemistry, Math, Biology)</option>
+                    <option value="Commerce (with Mathematics)">Commerce (with Mathematics)</option>
+                    <option value="Commerce (without Mathematics)">Commerce (without Mathematics)</option>
+                    <option value="Humanities / Arts">Humanities / Arts</option>
+                    <option value="Other">Other / Custom Stream</option>
+                  </select>
+                </div>
 
-          {/* Interests Checkboxes */}
-          <div>
+                {/* Elective / 5th Subject */}
+                <div>
+                  <label htmlFor="electiveSubject" className="block text-sm font-semibold text-slate-300 mb-2">
+                    Elective / 5th Subject
+                  </label>
+                  <select
+                    id="electiveSubject"
+                    value={selectedElective}
+                    onChange={(e) => {
+                      setSelectedElective(e.target.value);
+                      if (e.target.value !== 'Other') setCustomElective('');
+                    }}
+                    className="w-full bg-slate-950/60 border border-slate-800 focus:ring-indigo-500/20 focus:border-indigo-500 rounded-lg py-3 px-4 text-slate-300 text-sm focus:outline-none focus:ring-4 transition-all"
+                  >
+                    <option value="">Select Elective</option>
+                    <option value="Computer Science / IP">Computer Science / Information Practices (IP)</option>
+                    <option value="Psychology">Psychology</option>
+                    <option value="Physical Education">Physical Education</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Fine Arts / Design">Fine Arts / Design</option>
+                    <option value="Entrepreneurship">Entrepreneurship</option>
+                    <option value="None">None / English Only</option>
+                    <option value="Other">Other (Custom)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Custom Stream Input */}
+              {selectedStream === 'Other' && (
+                <div className="p-4 bg-slate-950/40 border border-slate-800 rounded-lg animate-fade-in">
+                  <label htmlFor="customStream" className="block text-xs font-semibold text-slate-350 mb-2">
+                    Specify Custom Stream
+                  </label>
+                  <input
+                    type="text"
+                    id="customStream"
+                    value={customStream}
+                    onChange={(e) => setCustomStream(e.target.value)}
+                    placeholder="e.g. Vocational Courses, Agricultural Science"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg py-2.5 px-3 text-white placeholder-slate-650 text-xs focus:outline-none focus:border-indigo-500 transition-all"
+                  />
+                </div>
+              )}
+
+              {/* Custom Elective Input */}
+              {selectedElective === 'Other' && (
+                <div className="p-4 bg-slate-950/40 border border-slate-800 rounded-lg animate-fade-in">
+                  <label htmlFor="customElective" className="block text-xs font-semibold text-slate-350 mb-2">
+                    Specify Custom Elective
+                  </label>
+                  <input
+                    type="text"
+                    id="customElective"
+                    value={customElective}
+                    onChange={(e) => setCustomElective(e.target.value)}
+                    placeholder="e.g. Music, Painting, Home Science"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-lg py-2.5 px-3 text-white placeholder-slate-650 text-xs focus:outline-none focus:border-indigo-500 transition-all"
+                  />
+                </div>
+              )}
+              {errors.subjects && <p className="text-xs text-red-400">{errors.subjects}</p>}
+            </div>
+          ) : (
+            <div>
+              <label className="block text-sm font-semibold text-slate-300 mb-2">
+                Subjects / Stream Details
+              </label>
+              <input
+                type="text"
+                placeholder="Please select Class/Standard first"
+                disabled
+                className="w-full bg-slate-950/40 border border-slate-800 rounded-lg py-3 px-4 text-slate-500 cursor-not-allowed text-sm"
+              />
+            </div>
+          )}
+
+          {/* Areas of Interest Dropdown */}
+          <div className="relative">
             <span className="block text-sm font-semibold text-slate-300 mb-2">
               Areas of Interest (Select all that apply)
             </span>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {INTEREST_OPTIONS.map((interest) => {
-                const isChecked = formData.interests.includes(interest);
-                return (
-                  <label
-                    key={interest}
-                    className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer select-none transition-all ${
-                      isChecked
-                        ? 'border-indigo-500 bg-indigo-500/10 text-white'
-                        : 'border-slate-850 bg-slate-950/40 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => handleInterestChange(interest)}
-                      className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-slate-900"
-                    />
-                    <span className="text-xs font-medium">{interest}</span>
-                  </label>
-                );
-              })}
-            </div>
-            
+            <button
+              type="button"
+              onClick={() => setIsOpenInterests(!isOpenInterests)}
+              className={`w-full flex items-center justify-between bg-slate-950/60 border ${
+                errors.interests ? 'border-red-500/80 focus:ring-red-500/20' : 'border-slate-800 focus:ring-indigo-500/20 focus:border-indigo-500'
+              } rounded-lg py-3 px-4 text-left text-slate-300 hover:border-slate-700 transition-all cursor-pointer`}
+            >
+              <span className="truncate text-sm">
+                {formData.interests.length > 0 
+                  ? formData.interests.join(', ') 
+                  : 'Select your interests'}
+              </span>
+              <svg 
+                className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${isOpenInterests ? 'rotate-180' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            {isOpenInterests && (
+              <>
+                <div 
+                  className="fixed inset-0 z-10 cursor-default" 
+                  onClick={() => setIsOpenInterests(false)} 
+                />
+                
+                <div className="absolute left-0 right-0 mt-2 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-20 max-h-64 overflow-y-auto p-2 space-y-1 animate-fade-in">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 p-1">
+                    {INTEREST_OPTIONS.map((interest) => {
+                      const isChecked = formData.interests.includes(interest);
+                      return (
+                        <button
+                          key={interest}
+                          type="button"
+                          onClick={() => handleInterestChange(interest)}
+                          className={`flex items-center space-x-2.5 p-2.5 rounded-lg border text-left cursor-pointer transition-all ${
+                            isChecked
+                              ? 'border-indigo-500/50 bg-indigo-500/10 text-white'
+                              : 'border-transparent bg-slate-950/40 text-slate-400 hover:bg-slate-800 hover:text-white'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            readOnly
+                            className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-slate-900 pointer-events-none"
+                          />
+                          <span className="text-xs font-semibold">{interest}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+
             {/* Custom Input for 'Other' */}
             {formData.interests.includes('Other') && (
               <div className="mt-4 p-4 bg-slate-950/40 border border-slate-800 rounded-lg animate-fade-in">
-                <label htmlFor="customInterest" className="block text-xs font-semibold text-slate-300 mb-2">
+                <label htmlFor="customInterest" className="block text-xs font-semibold text-slate-350 mb-2">
                   Please specify your other interests:
                 </label>
                 <input
@@ -230,7 +399,7 @@ export default function StudentForm({ onSubmit, isLoading }) {
                   value={customInterest}
                   onChange={(e) => setCustomInterest(e.target.value)}
                   placeholder="e.g. Hospitality, Aviation, Psychology, Performing Arts"
-                  className="w-full bg-slate-900 border border-slate-800 rounded-lg py-2.5 px-3 text-white placeholder-slate-600 text-xs focus:outline-none focus:border-indigo-500 transition-all"
+                  className="w-full bg-slate-900 border border-slate-850 rounded-lg py-2.5 px-3 text-white placeholder-slate-650 text-xs focus:outline-none focus:border-indigo-500 transition-all"
                 />
               </div>
             )}

@@ -55,6 +55,7 @@ export const MOCK_DATABASE = {
       { name: "Delhi Technological University (DTU)", location: "Delhi", ranking: "NIRF #12", type: "Government" }
     ],
     skills: [
+      { name: "Python Programming", importance: "Must Have", resources: "https://roadmap.sh/pdfs/roadmaps/python.pdf" },
       { name: "Data Structures & Algorithms", importance: "Must Have", resources: "LeetCode, GeeksforGeeks, Coursera" },
       { name: "Full-Stack Development (React/Node)", importance: "Good to Have", resources: "freeCodeCamp, Full Stack Open" }
     ]
@@ -94,6 +95,7 @@ export const MOCK_DATABASE = {
         { name: "IIT Bombay", location: "मुंबई, महाराष्ट्र", ranking: "NIRF #1", type: "Government" }
       ],
       skills: [
+        { name: "पायथन प्रोग्रामिंग (Python Programming)", importance: "Must Have", resources: "https://roadmap.sh/pdfs/roadmaps/python.pdf" },
         { name: "डेटा संरचनाएं और एल्गोरिदम", importance: "Must Have", resources: "LeetCode, GeeksforGeeks" }
       ]
     },

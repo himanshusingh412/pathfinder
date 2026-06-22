@@ -1,7 +1,9 @@
-import React from 'react';
-import { Compass, Map, Award, BookOpen, Download, GraduationCap, CheckCircle2, Globe, Video } from 'lucide-react';
+import React, { useState } from 'react';
+import { Compass, Map, Award, BookOpen, Download, GraduationCap, CheckCircle2, Globe, Video, X, ExternalLink, FileText } from 'lucide-react';
 
 export default function ResultsDashboard({ roadmapData, studentName, onStartChat }) {
+  const [activePdf, setActivePdf] = useState(null);
+
   if (!roadmapData) return null;
 
   const {
@@ -274,17 +276,88 @@ export default function ResultsDashboard({ roadmapData, studentName, onStartChat
                 </div>
                 <div className="mt-2 pt-2 border-t border-gray-800/80 print:border-gray-250 flex justify-between items-center text-xs">
                   <span className="text-gray-400 print:text-gray-600">Resources:</span>
-                  <a
-                    href={skill.resources && skill.resources.startsWith('http') ? skill.resources : `https://www.google.com/search?q=${encodeURIComponent(skill.name + " resources")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-350 hover:underline font-semibold"
-                  >
-                    View Study Path &rarr;
-                  </a>
+                  {skill.resources && (skill.resources.startsWith('http') || skill.resources.toLowerCase().includes('.pdf')) ? (
+                    <button
+                      onClick={() => {
+                        const url = skill.resources.startsWith('http') 
+                          ? skill.resources 
+                          : `https://roadmap.sh/pdfs/roadmaps/python.pdf`;
+                        setActivePdf({ name: skill.name, url });
+                      }}
+                      className="text-indigo-400 hover:text-indigo-350 hover:underline font-semibold bg-transparent border-none cursor-pointer p-0 text-left active:scale-[0.98] outline-none"
+                    >
+                      View Study Path &rarr;
+                    </button>
+                  ) : (
+                    <a
+                      href={`https://www.google.com/search?q=${encodeURIComponent(skill.name + " resources")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-indigo-400 hover:text-indigo-350 hover:underline font-semibold"
+                    >
+                      View Study Path &rarr;
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* PDF Viewer Modal */}
+      {activePdf && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 animate-fade-in print:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-slate-950/80 backdrop-blur-md cursor-pointer"
+            onClick={() => setActivePdf(null)}
+          />
+
+          {/* Modal Box */}
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col overflow-hidden relative z-10 animate-scale-up">
+            {/* Header */}
+            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-800 bg-slate-950/60 backdrop-blur-md">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base md:text-lg font-bold text-white flex items-center gap-2 truncate">
+                  <span className="p-1.5 bg-indigo-500/10 rounded-lg text-indigo-400 shrink-0">
+                    <FileText size={18} />
+                  </span>
+                  <span className="truncate">{activePdf.name} Study Plan</span>
+                </h3>
+                <p className="text-[10px] text-slate-400 mt-0.5 truncate pr-4">
+                  {activePdf.url}
+                </p>
+              </div>
+              
+              <div className="flex items-center gap-2 md:gap-3 shrink-0">
+                <a 
+                  href={activePdf.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-650 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-all shadow-md hover:shadow-indigo-500/10 active:scale-95"
+                  title="Open in new window (Chrome)"
+                >
+                  <ExternalLink size={13} />
+                  <span className="hidden sm:inline">Open in Chrome</span>
+                </a>
+                <button
+                  onClick={() => setActivePdf(null)}
+                  className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors focus:outline-none cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* PDF Body Container */}
+            <div className="flex-1 bg-slate-950 relative">
+              <iframe
+                src={`https://docs.google.com/gview?url=${encodeURIComponent(activePdf.url)}&embedded=true`}
+                className="w-full h-full border-none relative z-10"
+                title={activePdf.name}
+              />
+            </div>
           </div>
         </div>
       )}
