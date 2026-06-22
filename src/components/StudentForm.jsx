@@ -322,71 +322,35 @@ export default function StudentForm({ onSubmit, isLoading }) {
             </div>
           )}
 
-          {/* Areas of Interest Dropdown */}
-          <div className="relative">
+          {/* Areas of Interest Checkboxes */}
+          <div>
             <span className="block text-sm font-semibold text-slate-300 mb-2">
               Areas of Interest (Select all that apply)
             </span>
-            <button
-              type="button"
-              onClick={() => setIsOpenInterests(!isOpenInterests)}
-              className={`w-full flex items-center justify-between bg-slate-950/60 border ${
-                errors.interests ? 'border-red-500/80 focus:ring-red-500/20' : 'border-slate-800 focus:ring-indigo-500/20 focus:border-indigo-500'
-              } rounded-lg py-3 px-4 text-left text-slate-300 hover:border-slate-700 transition-all cursor-pointer`}
-            >
-              <span className="truncate text-sm">
-                {formData.interests.length > 0 
-                  ? formData.interests.join(', ') 
-                  : 'Select your interests'}
-              </span>
-              <svg 
-                className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${isOpenInterests ? 'rotate-180' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isOpenInterests && (
-              <>
-                <div 
-                  className="fixed inset-0 z-10 cursor-default" 
-                  onClick={() => setIsOpenInterests(false)} 
-                />
-                
-                <div className="absolute left-0 right-0 mt-2 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-20 max-h-64 overflow-y-auto p-2 space-y-1 animate-fade-in">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 p-1">
-                    {INTEREST_OPTIONS.map((interest) => {
-                      const isChecked = formData.interests.includes(interest);
-                      return (
-                        <button
-                          key={interest}
-                          type="button"
-                          onClick={() => handleInterestChange(interest)}
-                          className={`flex items-center space-x-2.5 p-2.5 rounded-lg border text-left cursor-pointer transition-all ${
-                            isChecked
-                              ? 'border-indigo-500/50 bg-indigo-500/10 text-white'
-                              : 'border-transparent bg-slate-950/40 text-slate-400 hover:bg-slate-800 hover:text-white'
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            readOnly
-                            className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-slate-900 pointer-events-none"
-                          />
-                          <span className="text-xs font-semibold">{interest}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </>
-            )}
-
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {INTEREST_OPTIONS.map((interest) => {
+                const isChecked = formData.interests.includes(interest);
+                return (
+                  <label
+                    key={interest}
+                    className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer select-none transition-all ${
+                      isChecked
+                        ? 'border-indigo-500 bg-indigo-500/10 text-white'
+                        : 'border-slate-850 bg-slate-950/40 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => handleInterestChange(interest)}
+                      className="rounded border-slate-700 text-indigo-600 focus:ring-indigo-500 bg-slate-900"
+                    />
+                    <span className="text-xs font-medium">{interest}</span>
+                  </label>
+                );
+              })}
+            </div>
+            
             {/* Custom Input for 'Other' */}
             {formData.interests.includes('Other') && (
               <div className="mt-4 p-4 bg-slate-950/40 border border-slate-800 rounded-lg animate-fade-in">

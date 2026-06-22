@@ -4,6 +4,17 @@ import { Compass, Map, Award, BookOpen, Download, GraduationCap, CheckCircle2, G
 export default function ResultsDashboard({ roadmapData, studentName, onStartChat }) {
   const [activePdf, setActivePdf] = useState(null);
 
+  const getRoadmapImageUrl = (url) => {
+    if (!url) return null;
+    if (url.includes('roadmap.sh/pdfs/roadmaps/')) {
+      const match = url.match(/\/roadmaps\/([^.]+)\.pdf/);
+      if (match && match[1]) {
+        return `https://roadmap.sh/og/roadmap/${match[1]}`;
+      }
+    }
+    return null;
+  };
+
   if (!roadmapData) return null;
 
   const {
@@ -350,13 +361,23 @@ export default function ResultsDashboard({ roadmapData, studentName, onStartChat
               </div>
             </div>
 
-            {/* PDF Body Container */}
-            <div className="flex-1 bg-slate-950 relative">
-              <iframe
-                src={`https://docs.google.com/gview?url=${encodeURIComponent(activePdf.url)}&embedded=true`}
-                className="w-full h-full border-none relative z-10"
-                title={activePdf.name}
-              />
+            {/* PDF/Image Body Container */}
+            <div className="flex-1 bg-slate-950 overflow-auto relative p-4 md:p-6 flex justify-center items-start">
+              {getRoadmapImageUrl(activePdf.url) ? (
+                <div className="w-full flex justify-center py-4">
+                  <img
+                    src={getRoadmapImageUrl(activePdf.url)}
+                    alt={`${activePdf.name} Study Plan`}
+                    className="max-w-full h-auto rounded-xl shadow-2xl border border-slate-800"
+                  />
+                </div>
+              ) : (
+                <iframe
+                  src={`https://docs.google.com/gview?url=${encodeURIComponent(activePdf.url)}&embedded=true`}
+                  className="w-full h-full border-none relative z-10"
+                  title={activePdf.name}
+                />
+              )}
             </div>
           </div>
         </div>
