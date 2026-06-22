@@ -141,12 +141,19 @@ const MOCK_DATABASE = {
 
 function getOfflineMockRoadmap(studentData) {
   const lang = studentData.language === 'Hindi' ? 'Hindi' : 'English';
+  
+  if (lang === 'English') {
+    return MOCK_DATABASE.English;
+  }
+  
   const interests = studentData.interests || [];
+  const hasTech = interests.some(i => i.toLowerCase().includes('tech') || i.toLowerCase().includes('science'));
+  const hasMed = interests.some(i => i.toLowerCase().includes('med') || i.toLowerCase().includes('health'));
   
   let category = 'Default';
-  if (interests.includes('Technology') || interests.includes('Science')) {
+  if (hasTech) {
     category = 'Technology';
-  } else if (interests.includes('Medicine')) {
+  } else if (hasMed) {
     category = 'Medicine';
   }
   
