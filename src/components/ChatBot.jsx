@@ -145,7 +145,7 @@ export default function ChatBot({ studentData, roadmapData, onClose }) {
             disabled={isLoading || !inputText.trim()}
             className="bg-indigo-650 hover:bg-indigo-600 disabled:bg-slate-800 disabled:text-slate-650 text-white p-3 rounded-xl transition-all shadow-md active:scale-[0.97]"
           >
-            <svg className="w-5 h-5 transform rotate-90" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
             </svg>
           </button>
