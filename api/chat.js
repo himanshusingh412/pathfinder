@@ -184,7 +184,33 @@ STRICTLY AVOID:
 • Official Link:
 → https://www.nid.edu`;
     } else if (lang === "Hindi") {
-      if (lowerQuery.includes("college") || lowerQuery.includes("कॉलेज")) {
+      if (lowerQuery.includes("code") || lowerQuery.includes("logic") || lowerQuery.includes("develop") || lowerQuery.includes("software") || lowerQuery.includes("कोडिंग")) {
+        reply = `🎯 सॉफ्टवेयर कोडिंग और लॉजिक
+
+• सही दिशा!
+→ कोडिंग का अर्थ है समस्याओं को व्यवस्थित तरीके से हल करना।
+→ सॉफ्टवेयर डेवलपर्स की मांग हमेशा बहुत अधिक रहती है।
+
+• कदम:
+→ किसी एक भाषा (जैसे Python या JavaScript) से शुरुआत करें।
+→ छोटे कोडिंग अभ्यास हल करें।
+
+• प्रश्न:
+→ क्या आपने पहले कभी कोडिंग का प्रयास किया है, या यह आपकी पहली बार है?`;
+      } else if (lowerQuery.includes("design") || lowerQuery.includes("visual") || lowerQuery.includes("layout") || lowerQuery.includes("figma") || lowerQuery.includes("art") || lowerQuery.includes("डिजाइन")) {
+        reply = `🎯 UI/UX डिजाइन और क्रिएटिव क्षेत्र
+
+• शानदार विचार!
+→ डिजिटल प्रोडक्ट्स को सुंदर और उपयोगी बनाना ही डिजाइनिंग है।
+→ यह कोडिंग और कलात्मक सौंदर्य का एक बेहतरीन संयोजन है।
+
+• कदम:
+→ Figma या Canva ऐप चलाकर बुनियादी चीजें सीखें।
+→ लोकप्रिय ऐप्स के लेआउट का अध्ययन करें।
+
+• प्रश्न:
+→ क्या आपको रंग चुनना और दृश्य डिजाइन बनाना पसंद है?`;
+      } else if (lowerQuery.includes("college") || lowerQuery.includes("कॉलेज")) {
         reply = `🎯 कॉलेज प्रवेश
 
 • जानकारी:
@@ -201,19 +227,69 @@ STRICTLY AVOID:
 
 • लक्ष्य:
 ✓ परीक्षा पैटर्न को समझना`;
-      } else {
-        reply = `🎯 कैरियर मार्ग
+      } else if (lowerQuery.includes("yes") || lowerQuery.includes("tried") || lowerQuery.includes("हाँ") || lowerQuery.includes("किया")) {
+        reply = `🎯 व्यावहारिक अभ्यास
 
-• कार्य:
-→ कोडिंग सीखना
-→ प्रोजेक्ट बनाना
-→ समस्या समाधान सुधारना
+• बहुत बढ़िया!
+→ व्यावहारिक अभ्यास सीखने का सबसे तेज़ तरीका है।
+
+• कदम:
+→ सरल प्रोजेक्ट बनाएं (जैसे पर्सनल वेबसाइट)।
+→ अपनी कोडिंग को Git/GitHub पर रखें।
 
 • प्रश्न:
-→ क्या आप गणित में रुचि रखते हैं?`;
+→ आपने किस कोडिंग प्रोजेक्ट या विषय पर काम किया?`;
+      } else if (lowerQuery.includes("first time") || lowerQuery.includes("no") || lowerQuery.includes("never") || lowerQuery.includes("नहीं") || lowerQuery.includes("पहली")) {
+        reply = `🎯 शुरुआत करना
+
+• कोई बात नहीं!
+→ हर सफल इंजीनियर शून्य से शुरुआत करता है।
+→ सीखने के लिए पहले से अनुभव होना ज़रूरी नहीं है।
+
+• कदम:
+→ YouTube चैनलों (जैसे code.org) से बुनियादी बातें सीखें।
+
+• प्रश्न:
+→ क्या आप पहले टेक एक्सप्लोर करना चाहेंगे, या बिज़नेस और डिज़ाइन?`;
+      } else {
+        reply = `🎯 कैरियर मार्ग मार्गदर्शन
+
+• सुझाव:
+→ अपने पसंदीदा रुचि क्षेत्र को पहचानें।
+→ एक छोटे से कदम से शुरुआत करें।
+
+• प्रश्न:
+→ क्या आप कोड लॉजिक (कोडिंग) पर काम करना पसंद करते हैं
+→ या विज़ुअल डिज़ाइन लेआउट (डिजाइनिंग) बनाना?`;
       }
     } else {
-      if (lowerQuery.includes("college") || lowerQuery.toLowerCase().includes("university")) {
+      if (lowerQuery.includes("code") || lowerQuery.includes("logic") || lowerQuery.includes("develop") || lowerQuery.includes("software") || lowerQuery.includes("coding")) {
+        reply = `🎯 Software Development & Logic
+
+• Great choice!
+→ Coding is all about building structured solutions.
+→ The demand for developers continues to be very high.
+
+• Action Step:
+→ Learn basic programming languages (like Python or JavaScript).
+→ Start with small coding challenges.
+
+• Question:
+→ Have you ever tried writing a line of code, or is this your first time?`;
+      } else if (lowerQuery.includes("design") || lowerQuery.includes("visual") || lowerQuery.includes("layout") || lowerQuery.includes("figma") || lowerQuery.includes("art")) {
+        reply = `🎯 UI/UX Design & Creative Paths
+
+• Excellent direction!
+→ Digital products need beautiful and functional layouts.
+→ Designers bridge the gap between human needs and code.
+
+• Action Step:
+→ Try creating a simple web wireframe.
+→ Play around with Figma or Canva tools to understand alignment.
+
+• Question:
+→ Do you enjoy picking color themes and designing visual look-and-feel?`;
+      } else if (lowerQuery.includes("college") || lowerQuery.includes("university")) {
         reply = `🎯 College Selection
 
 • Next step:
